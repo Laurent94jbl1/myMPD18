@@ -1,12 +1,24 @@
 {
-  "name": "myMPD",
-  "short_name": "myMPD",
-  "description": "myMPD is a standalone and mobile friendly web mpd client with a tiny footprint and advanced features.",
+  "name": "Diesis-Fidelity",
+  "short_name": "Diesis",
+  "description": "Diesis is a standalone and mobile friendly web mpd client with a tiny footprint and advanced features.",
   "start_url": ".",
-  "background_color": "#343a40",
-  "theme_color": "#343a40",
+  "background_color": "#4169E1",
+  "theme_color": "#4169E1",
   "display": "standalone",
   "icons": [
+    {
+      "src": "assets/appicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "assets/nicon-96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
     {
       "src": "assets/appicon-192.png",
       "sizes": "192x192",

@@ -39,7 +39,7 @@ body.mobile > footer > nav {
 
 :root {
   --grid-thumbnail-size: 175px;
-  --mympd-highlightcolor: var(--bs-green);
+  --mympd-highlightcolor: var(--bs-blue);
   --mympd-highlightcolor-contrast: var(--bs-light);
   --mympd-backgroundcolor: var(--bs-black);
   --mympd-card-footer-word-wrap: nowrap;
@@ -118,7 +118,7 @@ a.text-success:focus {
 }
 
 #splashScreen {
-  background: radial-gradient(at 100% 0%, #32d156 0%, #28a745 30%, #155724 100%);
+  background: radial-gradient(at 100% 0%, #007bff 0%, #0056b3 30%, #000000 100%);
   width: 100vw;
   height: 100vh;
   z-index: 2000;

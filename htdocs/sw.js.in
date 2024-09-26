@@ -9,6 +9,8 @@ const urlsToCache = [
     subdir + '/css/combined.css',
     subdir + '/js/combined.js',
     subdir + '/assets/appicon-192.png',
+    subdir + '/assets/appicon-96.png',
+    subdir + '/assets/nicon-96.png',
     subdir + '/assets/appicon-512.png',
     subdir + '/assets/coverimage-booklet',
     subdir + '/assets/coverimage-folder',

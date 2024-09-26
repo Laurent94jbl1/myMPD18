@@ -9,7 +9,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
   <meta name="apple-mobile-web-app-capable" content="yes"/>
   <meta name="apple-mobile-web-app-status-bar-style" content="black"/>
-  <meta name="theme-color" content="#4169E1"/>
+  <meta name="theme-color" content="#343a40"/>
 <!--debug-->  <link href="css/bootstrap.css" rel="stylesheet"/>
   <link href="assets/MaterialIcons-Regular.woff2" rel="preload" as="font" type="font/woff2" crossorigin="anonymous"/>
 <!--debug-->  <link href="css/mympd.css" rel="stylesheet"/>
@@ -23,32 +23,29 @@
 <body class="overflow-hidden mobile">
 <!-- Splash screen start -->
   <div id="splashScreen">
-   <div id="splashScreenLogo">
-      <style>
-       #splashScreenLogo {
-       text-align: center; /* Centre le contenu textuel et les images */
-       }
-     </style>
-      <img src="assets/appicon-192.png" alt="Logo1" /> 
+    <div id="splashScreenLogo">
+      <svg version="1.1" viewBox="0 0 8.4666665 8.4666669" xmlns="http://www.w3.org/2000/svg">
+        <path d="m1.5772 4.8257h0.59026v-1.1847h-0.59026z" fill="#fff" stroke-width=".26458"/>
+        <path d="m3.9382 7.195h0.59025v-5.9233h-0.59025z" fill="#fff" stroke-width=".26458"/>
+        <path d="m2.7577 6.0103h0.59026v-3.554h-0.59026z" fill="#fff" stroke-width=".26458"/>
+        <path d="m5.1187 2.4563v3.554l2.7826-1.777z" fill="#fff" stroke-width=".26458"/>
+      </svg>
     </div>
-     <div id="splashScreenAlert" data-phrase="Initializing Web Page Diesis"></div>
-      <script>
-       document.addEventListener('DOMContentLoaded', function() {
-       setTimeout(function() {
-       document.getElementById('splashScreenAlert').innerText = "Diesis is now ready!";
-       }, 3000);
-       });
-      </script>
-     </div>
-    </div>
+    <div id="splashScreenAlert" data-phrase="Initializing myMPD"></div>
   </div>
 <!-- Splash screen end -->
 <!-- Header start -->
   <header>
     <nav id="header" class="navbar navbar-expand fixed-top d-flex justify-content-between">
       <div id="headerLeft">
-        <a class="alwaysEnabled" href="#offcanvasMenu" id="mainMenu" data-bs-toggle="offcanvas" data-title-phrase="Diesis menu">
-	  <img src="assets/appicon-512.png" alt="Logo2" style="width: 48px; height: 48px;"/>
+        <a class="alwaysEnabled" href="#offcanvasMenu" id="mainMenu" data-bs-toggle="offcanvas" data-title-phrase="myMPD menu">
+          <svg version="1.1" viewBox="0 0 8.4666665 8.4666669" xmlns="http://www.w3.org/2000/svg">
+            <ellipse class="logoBg" cx="4.2333" cy="4.2333" rx="4.2333" ry="4.2333" fill="#6c757d"/>
+            <path class="logoFg" d="m1.5772 4.8257h0.59026v-1.1847h-0.59026z" fill="#fff" stroke-width=".26458"/>
+            <path class="logoFg" d="m3.9382 7.195h0.59025v-5.9233h-0.59025z" fill="#fff" stroke-width=".26458"/>
+            <path class="logoFg" d="m2.7577 6.0103h0.59026v-3.554h-0.59026z" fill="#fff" stroke-width=".26458"/>
+            <path class="logoFg" d="m5.1187 2.4563v3.554l2.7826-1.777z" fill="#fff" stroke-width=".26458"/>
+          </svg>
         </a>
       </div>
       <div id="navbar-main" class="d-flex overflow-auto noInitChilds"></div>
@@ -58,10 +55,15 @@
 <!-- Main menu start -->
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasMenu">
     <div class="offcanvas-header px-3">
-     <h4 class="offcanvas-title">
-        <img src="assets/appicon-512.png" alt="Logo3" class="me-2" style="width: 48px; height: 48px;"/>
-     </h4>
-     <button type="button" class="btn-close alwaysEnabled" data-bs-dismiss="offcanvas"></button>
+      <h4 class="offcanvas-title">
+        <svg class="me-2" version="1.1" viewBox="0 0 8.4666665 8.4666669" xmlns="http://www.w3.org/2000/svg">
+          <ellipse class="logoBg" cx="4.2333" cy="4.2333" rx="4.2333" ry="4.2333" fill="#28a745"/>
+          <path class="logoFg" d="m1.5772 4.8257h0.59026v-1.1847h-0.59026z" fill="#fff" stroke-width=".26458"/>
+          <path class="logoFg" d="m3.9382 7.195h0.59025v-5.9233h-0.59025z" fill="#fff" stroke-width=".26458"/>
+          <path class="logoFg" d="m2.7577 6.0103h0.59026v-3.554h-0.59026z" fill="#fff" stroke-width=".26458"/>
+          <path class="logoFg" d="m5.1187 2.4563v3.554l2.7826-1.777z" fill="#fff" stroke-width=".26458"/>
+        </svg>myMPD</h4>
+      <button type="button" class="btn-close alwaysEnabled" data-bs-dismiss="offcanvas"></button>
     </div>
     <div class="offcanvas-body">
       <a class="dropdown-item py-2" data-title-phrase="Shortcut: A" href="#" data-href='{"cmd": "showAddToPlaylist", "options": ["stream", []]}'><span class="mi me-2">playlist_add</span><span data-phrase="Add stream"></span></a>
@@ -72,7 +74,13 @@
       <a class="dropdown-item py-2 featPartitions" data-title-phrase="Shortcut: P" data-bs-toggle="modal" href="#modalPartitions"><span class="mi me-2">dashboard</span><span data-phrase="Partitions"></span></a>
       <a class="dropdown-item py-2" data-title-phrase="Shortcut: M" data-bs-toggle="modal" href="#modalMaintenance"><span class="mi me-2">build</span><span data-phrase="Maintenance"></span></a>
       <div class="dropdown-divider"></div>
+      <a class="dropdown-item py-2 featScripting" data-title-phrase="Shortcut: S" href="#" data-href='{"cmd": "showListScriptModal", "options": []}'><span class="mi me-2">code</span><span data-phrase="Scripts"></span></a>
+      <a class="dropdown-item py-2 featScripting" data-title-phrase="Shortcut: V" href="#" data-href='{"cmd": "showListVariablesModal", "options": []}'><span class="mi me-2">data_object</span><span data-phrase="Variables"></span></a>
+      <a class="dropdown-item py-2 featScripting" data-title-phrase="Shortcut: G" data-bs-toggle="modal" href="#modalTrigger"><span class="mi me-2">bolt</span><span data-phrase="Trigger"></span></a>
+      <a class="dropdown-item py-2 featTimer" data-title-phrase="Shortcut: I" data-bs-toggle="modal" href="#modalTimer"><span class="mi me-2">timer</span><span data-phrase="Timer"></span></a>
+      <div class="dropdown-divider"></div>
       <a class="dropdown-item py-2 featLibrary" href="browse/" target="_blank"><span class="mi me-2">folder_open</span><span data-phrase="Browse directories"></span></a>
+      <a class="dropdown-item py-2" data-title-phrase="Shortcut: N" data-bs-toggle="modal" href="#modalNotifications"><span class="mi me-2">chat_bubble_outline</span><span data-phrase="Notifications"></span></a>
       <a class="dropdown-item py-2" data-title-phrase="Shortcut: ?" data-bs-toggle="modal" href="#modalAbout"><span class="mi me-2">help_outline</span><span data-phrase="About"></span></a>
       <div class="dropdown-divider" id="mmLoginLogoutDivider"></div>
       <a class="dropdown-item py-2" data-title-phrase="Shortcut: L" id="mmLogin" href="#" data-href='{"cmd": "enterPin", "options": []}'><span class="mi me-2">login</span><span data-phrase="Login"></span></a>
@@ -1666,6 +1674,7 @@
               <div class="mb-3 row">
                 <div class="col-sm-4"></div>
                 <div class="col-sm-8">
+                  <a class="external" target="_blank" href="https://mpd.readthedocs.io/en/latest/user.html#mixramp" data-phrase="Mixramp documentation"></a>
                 </div>
               </div>
             </div>
@@ -1806,16 +1815,21 @@
       <div class="modal-body">
         <div class="tab-content">
           <div class="tab-pane active" id="modalAboutTabAbout">
-            <div id="headerLeft">
-              <a class="alwaysEnabled" href="#offcanvasMenu" id="mainMenu" data-bs-toggle="offcanvas" data-title-phrase="Diesis menu">
-               <img src="assets/appicon-512.png" alt="Logo2" style="width: 48px; height: 48px;"/>
-              </a>
-            </div>            
-            </svg>Diesis-Fidelity</h4>
+            <h4 class="mb-3">
+            <svg class="me-2" version="1.1" viewBox="0 0 8.4666665 8.4666669" xmlns="http://www.w3.org/2000/svg">
+              <ellipse class="logoBg" cx="4.2333" cy="4.2333" rx="4.2333" ry="4.2333" fill="#28a745"/>
+              <path class="logoFg" d="m1.5772 4.8257h0.59026v-1.1847h-0.59026z" fill="#fff" stroke-width=".26458"/>
+              <path class="logoFg" d="m3.9382 7.195h0.59025v-5.9233h-0.59025z" fill="#fff" stroke-width=".26458"/>
+              <path class="logoFg" d="m2.7577 6.0103h0.59026v-3.554h-0.59026z" fill="#fff" stroke-width=".26458"/>
+              <path class="logoFg" d="m5.1187 2.4563v3.554l2.7826-1.777z" fill="#fff" stroke-width=".26458"/>
+            </svg>myMPD</h4>
             <ul>
               <li><span data-phrase="Version"></span>: <span id="modalAboutMympdVersion"></span></li>
-              <li><span data-phrase="License"></span>: <a class="text-success external" target="_blank" rel="noreferrer" href="https://github.com/laurent94jbl1/myMPD18/blob/master/LICENSE.md">GPLv3</a></li>
-              <li><span data-phrase="Homepage"></span>: <a class="text-success external" target="_blank" rel="noreferrer" href="https://github.com/laurent94jbl1/myMPD18">https://github.com/laurent94jbl1/myMPD18</a></li>
+              <li><span data-phrase="License"></span>: <a class="text-success external" target="_blank" rel="noreferrer" href="https://github.com/jcorporation/myMPD/blob/master/LICENSE.md">GPLv3</a></li>
+              <li><span data-phrase="Homepage"></span>: <a class="text-success external" target="_blank" rel="noreferrer" href="https://github.com/jcorporation/mympd">https://github.com/jcorporation/mympd</a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://github.com/jcorporation/myMPD/discussions/167" class="text-success external" data-phrase="Help to improve myMPD"></a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://github.com/jcorporation/myMPD/issues/new?template=bug_report.md" class="text-success external" data-phrase="Report a bug"></a></li>
+              <li><a target="_blank" rel="noreferrer" href="https://jcorporation.github.io/myMPD/" class="text-success external" data-phrase="Documentation"></a></li>
             </ul>
 <!--debug-->  <div class="alert alert-secondary">Running in debug mode</div>
             <div class="table-responsive">
@@ -1836,7 +1850,7 @@
                   <tr><th data-phrase="Protocol version"></th><td id="modalAboutProtocolVersion"></td></tr>
                   <tr><td colspan="2" class="pt-3"><h5 data-phrase="Webserver"></h5></td></tr>
                   <tr><th data-phrase="IP-Address"></th><td id="modalAboutWebserverIP"></td></tr>
-                  <tr><th data-phrase="Diesis uri"></th><td id="modalAboutMympdUri"></td></tr>
+                  <tr><th data-phrase="myMPD uri"></th><td id="modalAboutMympdUri"></td></tr>
                   <tr class="featCacert"><th data-phrase="myMPD CA"></th>
                     <td><a class="text-success download alwaysEnabled" href="ca.crt" target="_blank" data-phrase="Download"></a></td>
                   </tr>
