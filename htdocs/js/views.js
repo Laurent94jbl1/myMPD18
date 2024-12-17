@@ -19,7 +19,12 @@ function setView(viewName) {
     }
     const newContainer = mode === 'table'
         ? pEl.viewTable.cloneNode(true)
-        : pEl.viewGrid.cloneNode(true);
+        : mode === 'grid' 
+            ? pEl.viewGrid.cloneNode(true)
+            : pEl.viewList.cloneNode(true);
+    if (viewName === 'Home') {
+        newContainer.firstElementChild.classList.remove('row');
+    }
     if (curContainer.parentNode.classList.contains('scrollContainer')) {
         // do not insert a scrolling container in an already scrolling parent
         newContainer.classList.remove('scrollContainer', 'table-responsive');
@@ -37,15 +42,23 @@ function setView(viewName) {
     newContainer.firstElementChild.addEventListener('long-press', function(event) {
         viewRightClickHandler(event);
     }, false);
-    if (mode === 'table') {
-        //init drag and drop
-        switch(viewName) {
-            case 'QueueCurrent':
-            case 'BrowsePlaylistDetail':
+    
+    //init drag and drop
+    switch(viewName) {
+        case 'Home':
+        case 'QueueCurrent':
+        case 'BrowsePlaylistDetail':
+            if (mode === 'table') {
                 dragAndDropTable(viewName + 'List');
-                break;
-            // No default
-        }
+            }
+            else if (mode === 'grid') {
+                dragAndDropGrid(viewName + 'List');
+            }
+            else {
+                dragAndDropList(viewName + 'List');
+            }
+            break;
+        // No default
     }
 }
 
@@ -66,7 +79,8 @@ function viewClickHandler(event) {
         return;
     }
     let target = null;
-    if (settings['view' + app.id].mode === 'table') {
+    const mode = settings['view' + app.id].mode;
+    if (mode === 'table') {
         // Links
         if (event.target.nodeName === 'A') {
             if (event.target.parentNode.getAttribute('data-col') === 'Action') {
@@ -88,7 +102,7 @@ function viewClickHandler(event) {
             return;
         }
     }
-    else {
+    else if (mode === 'grid') {
         if (event.target.nodeName === 'A') {
             if (event.target.getAttribute('href') !== '#') {
                 // allow default link action
@@ -99,6 +113,18 @@ function viewClickHandler(event) {
         }
         // set target to card
         target = event.target.closest('.card');
+    }
+    else {
+        if (event.target.nodeName === 'A') {
+            if (event.target.getAttribute('href') !== '#') {
+                // allow default link action
+                return;
+            }
+            handleViewActionClick(event);
+            return;
+        }
+        // set target to list-group-item
+        target = event.target.closest('.list-group-item');
     }
     event.preventDefault();
     event.stopPropagation();
@@ -153,7 +179,8 @@ function viewClickHandler(event) {
  * @returns {void}
  */
 function viewRightClickHandler(event) {
-    if (settings['view' + app.id].mode === 'table') {
+    const mode = settings['view' + app.id].mode;
+    if (mode === 'table') {
         if (event.target.parentNode.classList.contains('not-clickable') ||
             event.target.parentNode.parentNode.classList.contains('not-clickable') ||
             event.target.nodeName === 'TH')
@@ -162,7 +189,7 @@ function viewRightClickHandler(event) {
         }
         showContextMenu(event);
     }
-    else {
+    else if (mode === 'grid') {
         if (event.target.closest('.card').classList.contains('no-contextmenu')) {
             return;
         }
@@ -173,6 +200,12 @@ function viewRightClickHandler(event) {
         {
             showContextMenu(event);
         }
+    }
+    else {
+        if (event.target.closest('.list-group-item').classList.contains('no-contextmenu')) {
+            return;
+        }
+        showContextMenu(event);
     }
 }
 
@@ -207,6 +240,9 @@ function handleViewActionClick(event) {
             elGetById('BrowseDatabaseAlbumListSearchStr').value = '';
             gotoBrowse(event);
             break;
+        case 'refreshWidget':
+            updateHomeWidget(event.target.closest('.card'));
+            break;
         default:
             logError('Invalid action: ' + action);
     }
@@ -231,6 +267,8 @@ function getActionLinks(userData) {
                 return pEl.actionMenuBrowseDatabaseTagSongAlbums;
             }
             return pEl.actionMenuBrowseDatabaseTagSongs;
+        case 'BrowseDatabaseAlbumDetail':
+            return userData === 'disc' ? pEl.actionDiscIcons : pEl.actionIcons;
         default:
             return pEl.actionIcons;
     }
@@ -369,7 +407,7 @@ function setViewOptions(tableName, menu) {
     enabledList.addEventListener('click', function(event) {
         fieldClick(event);
     }, false);
-    dragAndDropList(enabledList);
+    dragAndDropFieldList(enabledList);
     menu.appendChild(
         elCreateTextTn('h6', {"class": ["dropdown-header","mt-2"]}, 'Available')
     );
@@ -387,7 +425,7 @@ function setViewOptions(tableName, menu) {
     availableList.addEventListener('click', function(event) {
         fieldClick(event);
     }, false);
-    dragList(availableList);
+    dragFieldList(availableList);
 }
 
 /**
@@ -395,7 +433,7 @@ function setViewOptions(tableName, menu) {
  * @param {object} list list to enable drag and drop
  * @returns {void}
  */
-function dragList(list) {
+function dragFieldList(list) {
     list.addEventListener('dragstart', function(event) {
         const target = event.target.nodeName === 'LI'
             ? event.target
@@ -415,8 +453,8 @@ function dragList(list) {
  * @param {object} list list to enable drag and drop
  * @returns {void}
  */
-function dragAndDropList(list) {
-    dragList(list);
+function dragAndDropFieldList(list) {
+    dragFieldList(list);
 
     list.addEventListener('dragenter', function(event) {
         if (event.target.closest('form') !== dragEl.closest('form')) {
@@ -491,29 +529,33 @@ function dragAndDropList(list) {
  */
 function setFields(tableName) {
     switch(tableName) {
-        case 'BrowsePlaylistList':
-            return ["Type", "Name", "Last-Modified", "Thumbnail"];
+        case 'BrowsePlaylistList': {
+            const tags = ["Type", "Name", "Last-Modified", "Thumbnail"];
+            setFieldsStickers(tags, stickerListAll);
+            return tags;
+        }
         case 'BrowseRadioFavorites':
         case 'BrowseRadioWebradiodb':
             return ["Added", "Country", "Description", "Genres", "Homepage", "Languages", "Last-Modified", "Name", "Region", "StreamUri", "Codec", "Bitrate", "Thumbnail"];
         case 'BrowseDatabaseTagList':
             return ["Value", "Thumbnail"];
-        case 'BrowseDatabaseAlbumList': {
+        case 'BrowseDatabaseAlbumList':
+        case 'QueueJukeboxAlbum': {
+            const tags = settings.tagListAlbum.slice();
+            if (tableName === 'QueueJukeboxAlbum') {
+                tags.push('Pos');
+            }
+            tags.push('Thumbnail');
             if (settings.albumMode === 'adv') {
-                const tags = settings.tagListAlbum.slice();
-                tags.push('Discs', 'SongCount', 'Duration', 'Last-Modified', 'Thumbnail');
+                tags.push('Discs', 'SongCount', 'Duration', 'Last-Modified');
                 if (features.featDbAdded === true) {
                     tags.push('Added');
                 }
-                return tags.filter(function(value) {
-                    return value !== 'Disc';
-                });
             }
-            else {
-                const tags = settings.tagListAlbum.slice();
-                tags.push('Thumbnail');
-                return tags;
-            }
+            setFieldsStickers(tags, stickerListAll);
+            return tags.filter(function(value) {
+                return value !== 'Disc';
+            });
         }
         case 'BrowseDatabaseAlbumDetailInfo': {
             if (settings.albumMode === 'adv') {
@@ -530,16 +572,6 @@ function setFields(tableName) {
             else {
                 return settings.tagListAlbum;
             }
-        }
-        case 'QueueJukeboxAlbum': {
-            const tags = settings.tagListAlbum.slice();
-            tags.push('Pos', 'Discs', 'SongCount', 'Duration', 'Last-Modified');
-            if (features.featDbAdded === true) {
-                tags.push('Added');
-            }
-            return tags.filter(function(value) {
-                return value !== 'Disc';
-            });
         }
         // No Default
     }
@@ -581,12 +613,29 @@ function setFields(tableName) {
     //sort tags 
     tags.sort();
     //append stickers
-    if (features.featStickers === true) {
-        for (const sticker of stickerList) {
-            tags.push(sticker);
-        }
-    }
+    setFieldsStickers(tags, stickerListSongs);
     return tags;
+}
+
+/**
+ * Adds the sticker names to the fields array for songs
+ * @param {Array} tags fields array to populate
+ * @param {Array} stickers stickers array to add
+ * @returns {void}
+ */
+function setFieldsStickers(tags, stickers) {
+    if (features.featStickers === false) {
+        return;
+    }
+    for (const sticker of stickers) {
+        if (sticker === 'like' && features.featLike === false) {
+            continue;
+        }
+        if (sticker === 'rating' && features.featRating === false) {
+            continue;
+        }
+        tags.push(sticker);
+    }
 }
 
 /**

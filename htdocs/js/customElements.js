@@ -13,6 +13,7 @@ function createPreGeneratedElements() {
     pEl.selectBtn = elCreateText('button', {"type": "button", "href": "#", "class": ["btn", "mi", "border-0", "color-darkgrey"], "data-title-phrase": "Select"}, 'radio_button_unchecked');
     pEl.selectAllBtn = elCreateText('button', {"type": "button", "href": "#", "class": ["btn", "mi", "border-0"], "data-title-phrase": "Select all"}, 'radio_button_unchecked');
     pEl.actionsBtn = elCreateText('a', {"data-action": "popover", "href": "#", "class": ["mi", "color-darkgrey"], "data-title-phrase": "Actions"}, ligatures['more']);
+    pEl.actionsDiscBtn = elCreateText('a', {"data-action": "popover", "data-contextmenu": "disc", "href": "#", "class": ["mi", "color-darkgrey"], "data-title-phrase": "Actions"}, ligatures['more']);
     pEl.removeBtn = elCreateText('a', {"data-action": "quickRemove", "href": "#", "class": ["mi", "color-darkgrey", "me-1"], "data-title-phrase": "Remove"}, 'clear');
     pEl.playBtn = elCreateText('a', {"data-action": "quickPlay", "href": "#", "class": ["mi", "color-darkgrey", "me-1"], "data-title-phrase": "Quick play"}, 'play_arrow');
     pEl.showSongsBtn = elCreateText('a', {"data-action": "showSongsByTag", "class": ["mi", "color-darkgrey", "me-1"], "href": "#", "data-title-phrase": "Show songs"}, 'music_note');
@@ -45,8 +46,16 @@ function createPreGeneratedElements() {
         pEl.showSongsBtn,
         pEl.showAlbumsBtn
     ];
+    pEl.actionMenuDisc = [
+        pEl.actionsDiscBtn
+    ];
+    pEl.actionMenuDiscPlay = [
+        pEl.playBtn,
+        pEl.actionsDiscBtn
+    ];
 
     pEl.actionIcons = pEl.actionMenu;
+    pEl.actionDiscIcons = pEl.actionMenuDisc;
     pEl.actionQueueIcons = pEl.actionMenu;
     pEl.actionJukeboxIcons = pEl.actionMenu;
     pEl.actionPlaylistDetailIcons = pEl.actionMenu;
@@ -64,6 +73,19 @@ function createPreGeneratedElements() {
     pEl.viewGrid = elCreateNode('div', {'class': ['container-fluid', 'cardsContainer', 'scrollContainer']},
         elCreateEmpty('div', {'class': ['row', 'mympd-grid']})
     );
+    pEl.viewList = elCreateNode('div', {'class': ['scrollContainer', 'listContainer']},
+        elCreateEmpty('div', {'class': ['list-group']})
+    );
+    pEl.songResumeBtn = elCreateNodes('div', {'class': ['btn-group', 'dropup']}, [
+        elCreateText('button', {'type': 'button', 'data-title-phrase': 'Resume', 'data-bs-toggle': 'dropdown', 'class': ['btn', 'btn-secondary', 'dropdown-toggle', 'mi']}, 'replay'),
+        elCreateNode('div', {'class': ['dropdown-menu', 'px-2']}, 
+            elCreateNodes('div', {'class': ['d-grid', 'gap-2']}, [
+                elCreateTextTn('button', {'class': ['btn', 'btn-sm', 'btn-secondary'], 'data-action': 'append'}, 'Append to queue'),
+                elCreateTextTn('button', {'class': ['btn', 'btn-sm', 'btn-secondary'], 'data-action': 'insert'}, 'Insert at start of queue'),
+                elCreateTextTn('button', {'class': ['btn', 'btn-sm', 'btn-secondary'], 'data-action': 'replace'}, 'Replace queue'),
+            ])
+        )
+    ]);
 }
 
 /**

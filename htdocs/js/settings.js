@@ -119,9 +119,13 @@ function parseSettings(obj) {
 
     if (settings.webuiSettings.footerSettingsPlayback === true) {
         elShowId('footerSettingsPlayback');
+        elHideId('PlaybackSettingsPlayback');
+        elHideId('QueueCurrentSettingsPlayback');
     }
     else {
         elHideId('footerSettingsPlayback');
+        elShowId('PlaybackSettingsPlayback');
+        elShowId('QueueCurrentSettingsPlayback');
     }
 
     if (settings.webuiSettings.footerPlaybackControls === 'both') {
@@ -236,6 +240,7 @@ function parseSettings(obj) {
         settings.webuiSettings.quickRemoveButton === true)
     {
         pEl.actionIcons = pEl.actionMenuPlay;
+        pEl.actionDiscIcons = pEl.actionMenuDiscPlay;
         pEl.actionQueueIcons = pEl.actionMenuRemove;
         pEl.actionJukeboxIcons = pEl.actionMenuPlayRemove;
         pEl.actionPlaylistDetailIcons = pEl.actionMenuPlayRemove;
@@ -243,6 +248,7 @@ function parseSettings(obj) {
     }
     else if (settings.webuiSettings.quickPlayButton === true) {
         pEl.actionIcons = pEl.actionMenuPlay;
+        pEl.actionDiscIcons = pEl.actionMenuDiscPlay;
         pEl.actionQueueIcons = pEl.actionMenu;
         pEl.actionJukeboxIcons = pEl.actionMenuPlay;
         pEl.actionPlaylistDetailIcons = pEl.actionMenuPlay;
@@ -250,6 +256,7 @@ function parseSettings(obj) {
     }
     else if (settings.webuiSettings.quickRemoveButton === true) {
         pEl.actionIcons = pEl.actionMenu;
+        pEl.actionDiscIcons = pEl.actionMenuDisc;
         pEl.actionQueueIcons = pEl.actionMenuRemove;
         pEl.actionJukeboxIcons = pEl.actionMenuRemove;
         pEl.actionPlaylistDetailIcons = pEl.actionMenuRemove;
@@ -257,6 +264,7 @@ function parseSettings(obj) {
     }
     else {
         pEl.actionIcons = pEl.actionMenu;
+        pEl.actionDiscIcons = pEl.actionMenuDisc;
         pEl.actionQueueIcons = pEl.actionMenu;
         pEl.actionJukeboxIcons = pEl.actionMenu;
         pEl.actionPlaylistDetailIcons = pEl.actionMenu;
@@ -298,6 +306,9 @@ function parseSettings(obj) {
     //finished parse setting, set ui state
     toggleUI();
     applyFeatures();
+    setFeedbacktypeId('PlaybackSongFeedback', 'song');
+    setFeedbacktypeId('BrowsePlaylistDetailFeedback', 'playlist');
+    setFeedbacktypeId('BrowseDatabaseAlbumDetailFeedback', 'mympd_album');
     settingsParsed = 'parsed';
     myMPDready = true;
     return true;

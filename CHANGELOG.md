@@ -4,6 +4,38 @@ https://github.com/jcorporation/myMPD/
 
 ***
 
+## myMPD v18.0.0 (not yet released)
+
+This release improves the support for the new MPD 0.24 sticker features. You can now rate not only songs but also albums and playlists and add custom stickers to songs, albums and playlists.
+
+This version also introduces scriptable widgets for the home screen.
+
+### API changes
+
+- MYMPD_API_DATABASE_LIST_RANDOM: new
+- MYMPD_API_HOME_WIDGET_SAVE: new
+- MYMPD_API_STICKER_GET: new
+- MYMPD_API_STICKER_DELETE: new
+- MYMPD_API_STICKER_LIST: new
+- MYMPD_API_STICKER_NAMES: new
+- MYMPD_API_STICKER_SET: new
+- MYMPD_API_PLAYLIST_LIST: add parameter fields
+- MYMPD_API_QUEUE_APPEND_URI_RESUME: new
+- MYMPD_API_QUEUE_INSERT_URI_RESUME: new
+- MYMPD_API_QUEUE_REPLACE_URI_RESUME: new
+
+### Changelog
+
+- Feat: Rating for albums and playlists #1134
+- Feat: User defined stickers #1091
+- Feat: Add list view
+- Feat: Add widgets for home screen
+- Upd: Hide advanced search by default
+- Upd: Mongoose 7.15
+- Fix: Send JSONRPC_EVENT_UPDATE_OPTIONS only on feature change
+
+***
+
 ## myMPD 17.0.3 (2024-08-25)
 
 This is a small bug fix release.

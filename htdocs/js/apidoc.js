@@ -193,6 +193,16 @@ const APIparams = {
         "type": APItypes.string,
         "example": "mpdscribble",
         "desc": "MPD channel name"
+    },
+    "stickerName": {
+        "type": APItypes.string,
+        "example": "name1",
+        "desc": "Sticker name"
+    },
+    "stickerType": {
+        "type": APItypes.string,
+        "example": "song",
+        "desc": "MPD sticker type"
     }
 };
 
@@ -349,6 +359,26 @@ const APImethods = {
             "play": APIparams.play
         }
     },
+    "MYMPD_API_DATABASE_LIST_RANDOM": {
+        "desc": "Lists random songs or albums.",
+        "params": {
+            "plist": {
+                "type": APItypes.string,
+                "example": "Database",
+                "desc": "Name of mpd playlist or \"Database\""
+            },
+            "quantity": {
+                "type": APItypes.uint,
+                "example": 10,
+                "desc": "Number of songs or albums to list"
+            },
+            "mode": {
+                "type": APItypes.uint,
+                "example": 1,
+                "desc": "1 = songs, 2 = albums"
+            }
+        }
+    },
     "MYMPD_API_QUEUE_SAVE": {
         "desc": "Saves the queue as playlist.",
         "params": {
@@ -430,13 +460,21 @@ const APImethods = {
         }
     },
     "MYMPD_API_QUEUE_INSERT_URI_TAGS": {
-        "desc": "Adds an uri to distinct position in the queue and set tags.",
+        "desc": "Adds a stream uri to distinct position in the queue and set tags.",
         "params": {
             "uri": APIparams.streamUri,
             "tags": APIparams.tagValues,
             "to": APIparams.to,
             "whence": APIparams.whence,
             "play": APIparams.play
+        }
+    },
+    "MYMPD_API_QUEUE_INSERT_URI_RESUME": {
+        "desc": "Adds an uri to distinct position in the queue and resumes playback.",
+        "params": {
+            "uri": APIparams.uri,
+            "to": APIparams.to,
+            "whence": APIparams.whence
         }
     },
     "MYMPD_API_QUEUE_INSERT_SEARCH": {
@@ -484,11 +522,17 @@ const APImethods = {
         }
     },
     "MYMPD_API_QUEUE_APPEND_URI_TAGS": {
-        "desc": "Appends an uri to the queue and set tags.",
+        "desc": "Appends a stream uri to the queue and set tags.",
         "params": {
             "uri": APIparams.streamUri,
             "tags": APIparams.tagValues,
             "play": APIparams.play
+        }
+    },
+    "MYMPD_API_QUEUE_APPEND_URI_RESUME": {
+        "desc": "Appends an uri to the queue and resumes playback.",
+        "params": {
+            "uri": APIparams.uri
         }
     },
     "MYMPD_API_QUEUE_APPEND_SEARCH": {
@@ -530,11 +574,17 @@ const APImethods = {
         }
     },
     "MYMPD_API_QUEUE_REPLACE_URI_TAGS": {
-        "desc": "Replaces the queue with uri and set tags.",
+        "desc": "Replaces the queue with stream uri and set tags.",
         "params": {
             "uri": APIparams.streamUri,
             "tags": APIparams.tagValues,
             "play": APIparams.play
+        }
+    },
+    "MYMPD_API_QUEUE_REPLACE_URI_RESUME": {
+        "desc": "Replaces the queue with uri and resumes playback.",
+        "params": {
+            "uri": APIparams.uri
         }
     },
     "MYMPD_API_QUEUE_REPLACE_SEARCH": {
@@ -808,7 +858,8 @@ const APImethods = {
                 "type": APItypes.uint,
                 "example": 0,
                 "desc": "0 = all playlists, 1 = static playlists, 2 = smart playlists"
-            }
+            },
+            "fields": APIparams.fields
         }
     },
     "MYMPD_API_PLAYLIST_CONTENT_LIST": {
@@ -1098,7 +1149,8 @@ const APImethods = {
                 "type": APItypes.uint,
                 "example": 1,
                 "desc": "0 = dislike, 1 = neutral, 2 = like"
-            }
+            },
+            "type": APIparams.stickerType
         }
     },
     "MYMPD_API_RATING": {
@@ -1109,6 +1161,50 @@ const APImethods = {
                 "type": APItypes.uint,
                 "example": 5,
                 "desc": "0 - 10 stars"
+            },
+            "type": APIparams.stickerType
+        }
+    },
+    "MYMPD_API_STICKER_DELETE": {
+        "desc": "Deletes a MPD sticker.",
+        "params": {
+            "uri": APIparams.uri,
+            "type": APIparams.stickerType,
+            "name": APIparams.stickerName
+        }
+    },
+    "MYMPD_API_STICKER_GET": {
+        "desc": "Gets a MPD sticker.",
+        "params": {
+            "uri": APIparams.uri,
+            "type": APIparams.stickerType,
+            "name": APIparams.stickerName
+        }
+    },
+    "MYMPD_API_STICKER_LIST": {
+        "desc": "Gets all MPD stickers for an uri.",
+        "params": {
+            "uri": APIparams.uri,
+            "type": APIparams.stickerType
+        }
+    },
+    "MYMPD_API_STICKER_NAMES": {
+        "desc": "Lists all user defined sticker names by type",
+        "params": {
+            "type": APIparams.stickerType,
+            "searchstr": APIparams.searchstr
+        }
+    },
+    "MYMPD_API_STICKER_SET": {
+        "desc": "Sets a MPD sticker.",
+        "params": {
+            "uri": APIparams.uri,
+            "type": APIparams.stickerType,
+            "name": APIparams.stickerName,
+            "value": {
+                "type": APItypes.string,
+                "example": "val1",
+                "desc": "Sticker value"
             }
         }
     },
@@ -2100,6 +2196,37 @@ const APImethods = {
                         "for replaceQueue: [\"plist\",\"nas/Webradios/swr1.m3u\",\"swr1.m3u\"], " +
                         "for appGoto: [\"Browse\",\"Database\",\"List\",\"0\",\"AlbumArtist\",\"-Last-Modified\",\"Album\",\"\"], "+
                         "for execScriptFromOptions: [\"Scriptname\",\"scriptarg1\"]"
+            }
+        }
+    },
+    "MYMPD_API_HOME_WIDGET_SAVE": {
+        "desc": "Saves a home icon",
+        "params": {
+            "replace": {
+                "type": APItypes.bool,
+                "example": false,
+                "desc": "Replace icon at pos oldpos"
+            },
+            "oldpos": {
+                "type": APItypes.uint,
+                "example": 0,
+                "desc": "Position of home icon to replace"
+            },
+            "name": {
+                "type": APItypes.string,
+                "example": "test home icon",
+                "desc": "Name of the home icon"
+            },
+            "size": {
+                "type": APItypes.string,
+                "example": "2x2",
+                "desc": "Size of the widget"
+            },
+            "script": APIparams.script,
+            "arguments": {
+                "type": APItypes.object,
+                "example": "{\"arg1\":\"value1\"}",
+                "desc": "Script arguments"
             }
         }
     },

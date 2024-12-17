@@ -538,16 +538,19 @@ bool mympd_api_playlist_content_rm_positions(struct t_partition_state *partition
 /**
  * Lists mpd playlists and myMPD smart playlists
  * @param partition_state pointer to partition state
+ * @param stickerdb pointer to stickerdb state
  * @param buffer already allocated sds string to append the response
  * @param request_id jsonrpc request id
  * @param offset list offset
  * @param limit maximum number of entries to print
  * @param searchstr string to search in the playlist name
  * @param type playlist type to list
+ * @param tagcols columns to print
  * @return pointer to buffer
  */
-sds mympd_api_playlist_list(struct t_partition_state *partition_state, sds buffer, unsigned request_id,
-        unsigned offset, unsigned limit, sds searchstr, enum playlist_types type)
+sds mympd_api_playlist_list(struct t_partition_state *partition_state, struct t_stickerdb_state *stickerdb,
+        sds buffer, unsigned request_id, unsigned offset, unsigned limit, sds searchstr, enum playlist_types type,
+        const struct t_fields *tagcols)
 {
     enum mympd_cmd_ids cmd_id = MYMPD_API_PLAYLIST_LIST;
     rax *entity_list = raxNew();
@@ -623,6 +626,10 @@ sds mympd_api_playlist_list(struct t_partition_state *partition_state, sds buffe
     buffer = jsonrpc_respond_start(buffer, cmd_id, request_id);
     buffer = sdscat(buffer,"\"data\":[");
 
+    bool print_stickers = partition_state->mpd_state->feat.stickers == true && tagcols->stickers.len > 0;
+    if (print_stickers == true) {
+        stickerdb_exit_idle(stickerdb);
+    }
     unsigned entity_count = 0;
     unsigned entities_returned = 0;
     raxIterator iter;
@@ -642,6 +649,10 @@ sds mympd_api_playlist_list(struct t_partition_state *partition_state, sds buffe
             buffer = tojson_sds(buffer, "Name", data->name, true);
             buffer = tojson_time(buffer, "Last-Modified", data->last_modified, true);
             buffer = tojson_bool(buffer, "smartplsOnly", data->type == PLTYPE_SMARTPLS_ONLY ? true : false, false);
+            if (print_stickers == true) {
+                buffer = sdscatlen(buffer, ",", 1);
+                buffer = mympd_api_sticker_get_print_batch(buffer, stickerdb, STICKER_TYPE_PLAYLIST, data->name, &tagcols->stickers);
+            }
             buffer = sdscatlen(buffer, "}", 1);
         }
         entity_count++;
@@ -649,11 +660,20 @@ sds mympd_api_playlist_list(struct t_partition_state *partition_state, sds buffe
         FREE_PTR(data);
     }
     raxStop(&iter);
+    if (print_stickers == true) {
+        stickerdb_enter_idle(stickerdb);
+    }
+    sds pic_path = sdscatfmt(sdsempty(), "%S/%s", partition_state->config->workdir, DIR_WORK_PICS_PLAYLISTS);
+    bool pic =  testdir("Playlists pics folder", pic_path, false, true) == DIR_EXISTS
+        ? true
+        : false;
+    FREE_SDS(pic_path);
     buffer = sdscatlen(buffer, "],", 2);
     buffer = tojson_sds(buffer, "searchstr", searchstr, true);
     buffer = tojson_uint64(buffer, "totalEntities", entity_list->numele, true);
     buffer = tojson_uint(buffer, "returnedEntities", entities_returned, true);
-    buffer = tojson_uint(buffer, "offset", offset, false);
+    buffer = tojson_uint(buffer, "offset", offset, true);
+    buffer = tojson_bool(buffer, "pics", pic, false);
     buffer = jsonrpc_end(buffer);
     raxFree(entity_list);
     return buffer;
@@ -686,7 +706,7 @@ static sds print_plist_entry(sds buffer, struct mpd_song *song, unsigned pos, bo
     if (stickers == true) {
         buffer = sdscatlen(buffer, ",", 1);
         struct t_sticker sticker;
-        stickerdb_get_all_batch(stickerdb, uri, &sticker, false);
+        stickerdb_get_all_batch(stickerdb, STICKER_TYPE_SONG, uri, &sticker, false);
         buffer = mympd_api_sticker_print(buffer, &sticker, &tagcols->stickers);
         if (sticker.mympd[STICKER_LAST_PLAYED] > *last_played_max) {
             *last_played_max = (time_t)sticker.mympd[STICKER_LAST_PLAYED];
@@ -800,10 +820,22 @@ sds mympd_api_playlist_content_search(struct t_partition_state *partition_state,
     buffer = tojson_sds(buffer, "expression", expression, true);
     buffer = tojson_sds(buffer, "plist", plist, true);
     buffer = tojson_bool(buffer, "smartpls", smartpls, true);
+    sds pic_path = sdscatfmt(sdsempty(), "%S/%s", partition_state->config->workdir, DIR_WORK_PICS_PLAYLISTS);
+    bool pic =  testdir("Playlists pics folder", pic_path, false, true) == DIR_EXISTS
+        ? true
+        : false;
+    FREE_SDS(pic_path);
+    buffer = tojson_bool(buffer, "pics", pic, true);
     buffer = sdscat(buffer, "\"lastPlayedSong\":{");
     buffer = tojson_time(buffer, "time", last_played_max, true);
     buffer = tojson_sds(buffer, "uri", last_played_song_uri, false);
     buffer = sdscatlen(buffer, "}", 1);
+    if (partition_state->mpd_state->feat.stickers == true) {
+        struct t_stickers sticker;
+        stickers_reset(&sticker);
+        stickers_enable_all(&sticker);
+        buffer = mympd_api_sticker_get_print(buffer, stickerdb, STICKER_TYPE_PLAYLIST, plist, &sticker);
+    }
     buffer = jsonrpc_end(buffer);
 
     FREE_SDS(last_played_song_uri);

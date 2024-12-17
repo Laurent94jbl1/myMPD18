@@ -59,9 +59,9 @@ function dragAndDropTable(tableId) {
         }
         const target = event.target.closest('TR');
         target.classList.remove('dragover');
-        const newSongPos = getData(target, 'pos');
-        const oldSongPos = getData(dragEl, 'pos');
-        if (oldSongPos === newSongPos) {
+        const newPos = getData(target, 'pos');
+        const oldPos = getData(dragEl, 'pos');
+        if (oldPos === newPos) {
             return;
         }
         // set dragged element uri to undefined to force table row replacement
@@ -71,11 +71,11 @@ function dragAndDropTable(tableId) {
         setUpdateViewId(tableId);
         switch(app.id) {
             case 'QueueCurrent': {
-                queueMoveSong(oldSongPos, newSongPos);
+                queueMoveSong(oldPos, newPos);
                 break;
             }
             case 'BrowsePlaylistDetail': {
-                currentPlaylistMoveSong(oldSongPos, newSongPos);
+                currentPlaylistMoveSong(oldPos, newPos);
                 break;
             }
             // No Default
@@ -149,18 +149,18 @@ function replaceTblRow(mode, row, el) {
  * @returns {HTMLElement} the created row
  */
 function addDiscRow(disc, albumId, colspan) {
+    const actionTd = elCreateEmpty('td', {"data-col": "Action"});
+    addActionLinks(actionTd, 'disc');
     const row = elCreateNodes('tr', {"class": ["not-clickable"]}, [
         elCreateNode('td', {},
             elCreateText('span', {"class": ["mi"]}, 'album')
         ),
         elCreateTextTnNr('td', {"colspan": (colspan - 1)}, 'Discnum', disc),
-        elCreateNode('td', {"data-col": "Action"},
-            elCreateText('a', {"data-action": "popover", "data-contextmenu": "disc", "href": "#", "class": ["mi", "color-darkgrey"],
-                "data-title-phrase":"Actions"}, ligatures['more'])
-        )
+        actionTd
     ]);
     setData(row, 'Disc', disc);
     setData(row, 'AlbumId', albumId);
+    setData(row, 'type', 'disc');
     return row;
 }
 
